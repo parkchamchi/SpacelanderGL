@@ -81,10 +81,21 @@ int main()
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	Shader lightSourceShader("shaders/light_cube.vs", "shaders/light_cube.fs");
+	Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
+	
+	float sun_rad = 5.0f;
 	std::vector<Planet *> planets {
-		new Planet(0.0f, 10.0f, 0.0f, 1.0f, &lightSourceShader),
-		new Planet(4.0f, 2.0f, 0.3f, 3.0f, &lightSourceShader),
+		new Planet(0.00f, sun_rad, 0.0f, 1.0f, &lightSrcShader), //Sun
+
+		new Planet(sun_rad + 0.38f, 0.04f, 0.3f, 3.0f, &lightSrcShader), //Mercury 
+		new Planet(sun_rad + 0.72f, 0.09f, 0.3f, 3.0f, &lightSrcShader), //Venus
+		new Planet(sun_rad + 1.00f, 0.10f, 0.3f, 3.0f, &lightSrcShader), //Earth
+		new Planet(sun_rad + 1.50f, 0.05f, 0.3f, 3.0f, &lightSrcShader), //Mars
+
+		new Planet(sun_rad + 5.20f, 1.10f, 0.3f, 3.0f, &lightSrcShader), //Jupiter
+		new Planet(sun_rad + 9.50f, 0.90f, 0.3f, 3.0f, &lightSrcShader), //Saturn
+		new Planet(sun_rad + 19.2f, 0.40f, 0.3f, 3.0f, &lightSrcShader), //Uranus
+		new Planet(sun_rad + 30.1f, 0.30f, 0.3f, 3.0f, &lightSrcShader), //Neptune
 	};
 
 	float last_time = (float) glfwGetTime();
