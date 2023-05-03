@@ -82,7 +82,10 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader lightSourceShader("shaders/light_cube.vs", "shaders/light_cube.fs");
-	Planet planet(4.0f, 2.0f, 0.3f, 3.0f, &lightSourceShader); 
+	std::vector<Planet *> planets {
+		new Planet(0.0f, 10.0f, 0.0f, 1.0f, &lightSourceShader),
+		new Planet(4.0f, 2.0f, 0.3f, 3.0f, &lightSourceShader),
+	};
 
 	float last_time = (float) glfwGetTime();
 	// render loop
@@ -111,8 +114,10 @@ int main()
 		float delta_time = time - last_time;
 		last_time = time;
 
-		planet.update(delta_time);
-		planet.draw(projection, view);
+		for (Planet *planet : planets) {
+			planet->update(delta_time);
+			planet->draw(projection, view);
+		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -122,7 +127,12 @@ int main()
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
+
+	for (auto planet: planets)
+		delete planet;
+
 	glfwTerminate();
+	std::cout << "Exiting." << std::endl;
 	return 0;
 }
 
