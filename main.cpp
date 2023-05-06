@@ -5,13 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-//#include <learnopengl/filesystem.h>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 #include <learnopengl/model.h>
 
 #include <iostream>
-
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -27,7 +25,7 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -37,7 +35,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+//glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -86,9 +84,10 @@ int main()
 
 	//Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
 	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
-	Model planet("resources/backpack/backpack.obj");
+	//Shader defaultShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
+	Model planet("resources/sphere.obj");
 
-	float last_time = (float) glfwGetTime();
+	//float last_time = (float) glfwGetTime();
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -107,6 +106,8 @@ int main()
 		// ------
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		defaultShader.use();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
