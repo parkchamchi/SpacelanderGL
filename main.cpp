@@ -1,26 +1,26 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/filesystem.h>
+//#include <learnopengl/filesystem.h>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
+#include <learnopengl/model.h>
 
 #include <iostream>
 
-#include "sphere.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
-unsigned int loadTexture(const char *path);
+//unsigned int loadTexture(const char *path);
 
 // settings
 const unsigned int SCR_WIDTH = 1600;
@@ -77,20 +77,17 @@ int main()
 		return -1;
 	}
 
+	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+    stbi_set_flip_vertically_on_load(true);
+
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
-	SolarSystem solarsys(&lightSrcShader, &lightSrcShader);
+	//Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
+	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
+	Model planet("resources/backpack/backpack.obj");
 
-	solarsys.add(0.00f, 8.0f, 0.0f, 1.0f); //Sun
-
-	solarsys.add(5.20f, 1.10f, 0.3f, 3.0f); //Jupiter
-	solarsys.add(9.50f, 0.90f, 0.3f, 3.0f); //Saturn
-	solarsys.add(19.2f, 0.40f, 0.3f, 3.0f); //Uranus
-	solarsys.add(30.1f, 0.30f, 0.3f, 3.0f); //Neptune
-	
 	float last_time = (float) glfwGetTime();
 	// render loop
 	// -----------
@@ -113,8 +110,15 @@ int main()
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
+		defaultShader.setMat4("projection", projection);
+        defaultShader.setMat4("view", view);		
 
-		solarsys.draw(projection, view);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		defaultShader.setMat4("model", model);
+
+		planet.Draw(defaultShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -188,6 +192,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
+/*
 unsigned int loadTexture(char const * path)
 {
 	unsigned int textureID;
@@ -224,3 +229,4 @@ unsigned int loadTexture(char const * path)
 
 	return textureID;
 }
+*/
