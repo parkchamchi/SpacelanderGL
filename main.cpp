@@ -23,8 +23,8 @@ void processInput(GLFWwindow *window);
 unsigned int loadTexture(const char *path);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_HEIGHT = 900;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
@@ -82,22 +82,15 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
+	SolarSystem solarsys(&lightSrcShader, &lightSrcShader);
+
+	solarsys.add(0.00f, 8.0f, 0.0f, 1.0f); //Sun
+
+	solarsys.add(5.20f, 1.10f, 0.3f, 3.0f); //Jupiter
+	solarsys.add(9.50f, 0.90f, 0.3f, 3.0f); //Saturn
+	solarsys.add(19.2f, 0.40f, 0.3f, 3.0f); //Uranus
+	solarsys.add(30.1f, 0.30f, 0.3f, 3.0f); //Neptune
 	
-	float sun_rad = 5.0f;
-	std::vector<Planet *> planets {
-		new Planet(0.00f, sun_rad, 0.0f, 1.0f, &lightSrcShader), //Sun
-
-		new Planet(sun_rad + 0.38f, 0.04f, 0.3f, 3.0f, &lightSrcShader), //Mercury 
-		new Planet(sun_rad + 0.72f, 0.09f, 0.3f, 3.0f, &lightSrcShader), //Venus
-		new Planet(sun_rad + 1.00f, 0.10f, 0.3f, 3.0f, &lightSrcShader), //Earth
-		new Planet(sun_rad + 1.50f, 0.05f, 0.3f, 3.0f, &lightSrcShader), //Mars
-
-		new Planet(sun_rad + 5.20f, 1.10f, 0.3f, 3.0f, &lightSrcShader), //Jupiter
-		new Planet(sun_rad + 9.50f, 0.90f, 0.3f, 3.0f, &lightSrcShader), //Saturn
-		new Planet(sun_rad + 19.2f, 0.40f, 0.3f, 3.0f, &lightSrcShader), //Uranus
-		new Planet(sun_rad + 30.1f, 0.30f, 0.3f, 3.0f, &lightSrcShader), //Neptune
-	};
-
 	float last_time = (float) glfwGetTime();
 	// render loop
 	// -----------
@@ -121,14 +114,7 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
-		float time = (float) glfwGetTime();
-		float delta_time = time - last_time;
-		last_time = time;
-
-		for (Planet *planet : planets) {
-			planet->update(delta_time);
-			planet->draw(projection, view);
-		}
+		solarsys.draw(projection, view);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -138,9 +124,6 @@ int main()
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
-
-	for (auto planet: planets)
-		delete planet;
 
 	glfwTerminate();
 	std::cout << "Exiting." << std::endl;

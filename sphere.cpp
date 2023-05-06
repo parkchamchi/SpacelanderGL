@@ -81,7 +81,7 @@ void Sphere::draw(glm::mat4 proj, glm::mat4 view) {
 
 	glBindVertexArray(VAO);
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(radius * 2));
+	model = glm::scale(model, glm::vec3(radius));
 	model = glm::rotate(model, rotation, rotation_direction);
 	model = glm::translate(model, location);
 	shader->setMat4("model", model);
@@ -110,4 +110,46 @@ void Planet::update(float deltatime) {
 	float z = distance * sinf(orbit_angle);
 
 	location = glm::vec3(x, 0.0f, z);
+}
+
+float Planet::get_radius() {
+	return radius;
+}
+
+float Planet::get_distance() {
+	return distance;
+}
+
+SolarSystem::SolarSystem(Shader *star_shader, Shader *planet_shader)
+	: star_shader(star_shader), planet_shader(planet_shader)
+{
+	
+}
+
+SolarSystem::~SolarSystem() {
+	for (Planet *planet : planets)
+		delete planet;
+}
+
+void SolarSystem::add(float distance_offset, float radius, float orbit_speed, float rotation_speed, bool is_star) {
+	float last_radius = 0.0f;
+	if (!planets.empty())
+		last_radius = planets.back()->get_radius();
+
+	Shader *shader = (is_star) ? star_shader : planet_shader;
+
+	planets.push_back(new Planet(distance_offset + last_radius*2, radius, orbit_speed, rotation_speed, shader));
+}
+
+void SolarSystem::draw(glm::mat4 proj, glm::mat4 view) {
+	static float last_time = (float) glfwGetTime();
+
+	float time = (float) glfwGetTime();
+	float delta_time = time - last_time;
+	last_time = time;
+
+	for (Planet *planet : planets) {
+		planet->update(delta_time);
+		planet->draw(proj, view);
+	}
 }
