@@ -1,0 +1,15 @@
+# Blender 3.3.0 MTL File: 'Sketchfab_2015_12_04_14_59_51.blend.blend'
+# www.blender.org
+
+newmtl mercurius
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+map_Kd mars_kleur.png
+map_Bump mars_bump.png

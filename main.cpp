@@ -85,7 +85,7 @@ int main()
 	//Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
 	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
 	//Shader defaultShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
-	Model planet("resources/sphere.obj");
+	Model planet("resources/mars/mars.obj");
 
 	//float last_time = (float) glfwGetTime();
 	// render loop
