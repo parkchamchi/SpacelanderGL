@@ -14,6 +14,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include "planet.hpp"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -36,6 +38,15 @@ float lastFrame = 0.0f;
 
 // lighting
 //glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
+//To bypass the stbi error
+class DrawableModel : public Drawable {
+public:
+	DrawableModel(Model *model) : model(model) {}
+	void draw(Shader *shader) override {model->Draw(*shader);}
+private:
+	Model *model;
+};
 
 int main()
 {
@@ -82,10 +93,9 @@ int main()
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	//Shader lightSrcShader("shaders/light_cube.vs", "shaders/light_cube.fs");
 	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
-	//Shader defaultShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
-	Model planet("resources/mars/mars.obj");
+	Model planet_model("resources/mars/mars.obj");
+	Planet planet(new DrawableModel(&planet_model), &defaultShader);
 
 	//float last_time = (float) glfwGetTime();
 	// render loop
@@ -110,16 +120,9 @@ int main()
 		defaultShader.use();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-		defaultShader.setMat4("projection", projection);
-        defaultShader.setMat4("view", view);		
+        glm::mat4 view = camera.GetViewMatrix();	
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-		defaultShader.setMat4("model", model);
-
-		planet.Draw(defaultShader);
+		planet.draw(projection, view);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
