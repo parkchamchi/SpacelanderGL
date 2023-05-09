@@ -27,7 +27,7 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -95,7 +95,16 @@ int main()
 
 	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
 	Model planet_model("resources/mars/mars.obj");
-	Planet planet(new DrawableModel(&planet_model), &defaultShader);
+	DrawableModel planet_drawable_model(&planet_model);
+
+	Planet planet(
+		&planet_drawable_model, &defaultShader,
+		1.0f, //radius
+		0.05f, //orbit_freq
+		100.0f, //orbit_radius
+		0.1f, //rot_freq
+		glm::vec3(0.0f, 1.0f, 0.0f) //rot_axis
+	);
 
 	//float last_time = (float) glfwGetTime();
 	// render loop
@@ -117,7 +126,8 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		defaultShader.use();
+		//defaultShader.use();
+		//float time = (float) glfwGetTime();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();	
