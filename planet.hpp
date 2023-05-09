@@ -16,6 +16,7 @@ public:
 	);
 	~Planet();
 
+	void update();
 	void draw(glm::mat4 projection, glm::mat4 view);
 
 private:
@@ -27,4 +28,7 @@ private:
 	float orbit_radius;
 	float rot_freq;
 	glm::vec3 rot_axis;
+
+	glm::vec3 position;
+	glm::mat4 model;
 };

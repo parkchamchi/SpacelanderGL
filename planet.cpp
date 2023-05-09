@@ -26,27 +26,24 @@ Planet::Planet(
 	orbit_freq(orbit_freq), orbit_radius(orbit_radius),
 	rot_freq(rot_freq), rot_axis(rot_axis)
 {
-
+	position = glm::vec3(radius, 0.0f, 0.0f);
+	model = glm::mat4(1.0f);
 }
 
 Planet::~Planet() {
 
 }
 
-void Planet::draw(glm::mat4 projection, glm::mat4 view) {
-	shader->use();
-
-	shader->setMat4("projection", projection);
-	shader->setMat4("view", view);
-
+void Planet::update() {
 	float time = get_time();
 
-	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::mat4(1.0f);
 
 	//Translate (orbit)
 	float x = orbit_radius * std::cos(time * orbit_freq);
 	float z = orbit_radius * std::sin(time * orbit_freq);
-	model = glm::translate(model, glm::vec3(x, 0.0f, z));
+	position = glm::vec3(x, 0.0f, z);
+	model = glm::translate(model, position);
 	//std::cout << "Planet loc: " << x << ", " << z << std::endl;	
 
 	glm::vec3 rot_axis(0.0f, 1.0f, 0.0f);
@@ -54,7 +51,14 @@ void Planet::draw(glm::mat4 projection, glm::mat4 view) {
 	float rot_angle = std::fmod(time, (2 * PI)); //radians
 	model = glm::rotate(model, rot_angle, rot_axis);
 	model = glm::scale(model, glm::vec3(radius));
+}
 
+void Planet::draw(glm::mat4 projection, glm::mat4 view) {
+	shader->use();
+
+	shader->setMat4("projection", projection);
+	shader->setMat4("view", view);
+	
 	shader->setMat4("model", model);
 
 	drawable->draw(shader);
