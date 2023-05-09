@@ -34,7 +34,7 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-Player player(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f);
+Player player(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 90.0f);
 
 // timing
 float deltaTime = 0.0f;
