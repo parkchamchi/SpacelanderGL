@@ -8,7 +8,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
-#include <chrono>
 #include <iostream>
 
 static float get_time() {
@@ -58,8 +57,16 @@ void Planet::draw(glm::mat4 projection, glm::mat4 view) {
 
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
-	
+
 	shader->setMat4("model", model);
 
 	drawable->draw(shader);
+}
+
+float Planet::get_radius() {
+	return radius;
+}
+
+glm::vec3 Planet::get_position() {
+	return position;
 }

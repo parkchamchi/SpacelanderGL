@@ -27,7 +27,7 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f);
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -105,6 +105,12 @@ int main()
 		0.1f, //rot_freq
 		glm::vec3(0.0f, 1.0f, 0.0f) //rot_axis
 	);
+	
+	//Init. camera
+	planet.update();
+	camera.Position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
+	//Rotate the camera 180 deg... a workaround
+	//camera.ProcessMouseMovement(180.0f / camera.MouseSensitivity, 0.0f);
 
 	//float last_time = (float) glfwGetTime();
 	// render loop

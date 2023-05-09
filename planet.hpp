@@ -19,6 +19,9 @@ public:
 	void update();
 	void draw(glm::mat4 projection, glm::mat4 view);
 
+	float get_radius();
+	glm::vec3 get_position();
+
 private:
 	Drawable *drawable;
 	Shader *shader;
