@@ -29,10 +29,6 @@ Planet::Planet(
 	model = glm::mat4(1.0f);
 }
 
-Planet::~Planet() {
-
-}
-
 void Planet::update() {
 	float time = get_time();
 

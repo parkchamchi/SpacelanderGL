@@ -15,6 +15,8 @@
 #include <stb_image.h>
 
 #include "planet.hpp"
+#include "player.hpp"
+#include "utils.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -27,10 +29,12 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f);
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+
+Player player(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f);
 
 // timing
 float deltaTime = 0.0f;
@@ -108,9 +112,10 @@ int main()
 	
 	//Init. camera
 	planet.update();
-	camera.Position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
-	//Rotate the camera 180 deg... a workaround
-	//camera.ProcessMouseMovement(180.0f / camera.MouseSensitivity, 0.0f);
+	glm::vec3 initial_position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
+	camera.Position = initial_position;
+	player.set_position(initial_position);
+	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
 	//float last_time = (float) glfwGetTime();
 	// render loop
@@ -132,13 +137,13 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//defaultShader.use();
-		//float time = (float) glfwGetTime();
+		planet.update();
+		camera.Position = player.get_position();
+		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();	
 
-		planet.update();
 		planet.draw(projection, view);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -162,14 +167,23 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	float forward_offset = 0.0f, pitch_offset = 0.0f, yaw_offset = 0.0f;
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		pitch_offset += deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		pitch_offset -= deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		yaw_offset -= deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		yaw_offset += deltaTime;
+	
+	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
+		forward_offset -= deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
+		forward_offset += deltaTime;
+
+	player.process_input(forward_offset, pitch_offset, yaw_offset);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -201,7 +215,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	//camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
