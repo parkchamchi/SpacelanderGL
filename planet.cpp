@@ -10,6 +10,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "utils.hpp"
+
 static float get_time() {
 	return (float) glfwGetTime();
 }
@@ -42,7 +44,6 @@ void Planet::update() {
 	//std::cout << "Planet loc: " << x << ", " << z << std::endl;	
 
 	glm::vec3 rot_axis(0.0f, 1.0f, 0.0f);
-	const float PI = 3.1415f;
 	float rot_angle = std::fmod(time, (2 * PI)); //radians
 	model = glm::rotate(model, rot_angle, rot_axis);
 	model = glm::scale(model, glm::vec3(radius));
@@ -65,4 +66,15 @@ float Planet::get_radius() {
 
 glm::vec3 Planet::get_position() {
 	return position;
+}
+
+void Planet::draw_orbit(int vertices_count) {
+	float vertices[vertices_count * 3];
+	for (int i = 0; i < vertices_count; i++) {
+		float angle = (2 * PI) / vertices_count * i;
+
+		vertices[3*i + 0] = std::cos(angle) * radius;
+		vertices[3*i + 1] = 0.0f;
+		vertices[3*i + 2] = std::sin(angle) * radius;
+	}
 }

@@ -22,6 +22,8 @@ public:
 	glm::vec3 get_position();
 
 private:
+	void draw_orbit(int vertices_count=360);
+
 	Drawable *drawable;
 	Shader *shader;
 
