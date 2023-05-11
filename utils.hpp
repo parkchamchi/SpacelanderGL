@@ -11,8 +11,6 @@ using namespace std;
 const float PI = 3.1415f;
 const glm::vec4 GREEN_VEC4(0.0f, 0.1f, 0.0f, 1.0f);
 
-string to_string(glm::vec3 vec);
-
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius);
 
 class Circle {

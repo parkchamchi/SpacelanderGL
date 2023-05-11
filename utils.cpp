@@ -12,10 +12,6 @@
 
 using namespace std;
 
-string to_string(glm::vec3 vec) {
-	return "vec3<" + to_string(vec.x) + ", " + to_string(vec.y) + ", " + to_string(vec.z) + ">";
-}
-
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
 	static Circle *circle = nullptr;
 	if (circle == nullptr)
