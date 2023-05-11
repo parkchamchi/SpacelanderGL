@@ -37,14 +37,14 @@ void Planet::update() {
 	model = glm::mat4(1.0f);
 
 	//Translate (orbit)
-	float x = orbit_radius * std::cos(time * orbit_freq);
-	float z = orbit_radius * std::sin(time * orbit_freq);
+	float x = orbit_radius * std::cos(time * orbit_freq * 2*PI);
+	float z = orbit_radius * std::sin(time * orbit_freq * 2*PI);
 	position = glm::vec3(x, 0.0f, z);
 	model = glm::translate(model, position);
 	//std::cout << "Planet loc: " << x << ", " << z << std::endl;	
 
 	glm::vec3 rot_axis(0.0f, 1.0f, 0.0f);
-	float rot_angle = std::fmod(time, (2 * PI)); //radians
+	float rot_angle = time * rot_freq * 2*PI; //radians
 	model = glm::rotate(model, rot_angle, rot_axis);
 	model = glm::scale(model, glm::vec3(radius));
 }

@@ -11,6 +11,7 @@ using namespace std;
 const float PI = 3.1415f;
 
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius);
+void utils_cleanup();
 
 class Circle {
 public:

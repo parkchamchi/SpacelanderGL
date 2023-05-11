@@ -104,10 +104,10 @@ int main()
 
 	Planet planet(
 		&planet_drawable_model, &defaultShader,
-		1.0f, //radius
-		0.05f, //orbit_freq
+		5.0f, //radius
+		0.01f, //orbit_freq
 		100.0f, //orbit_radius
-		0.1f, //rot_freq
+		0.05f, //rot_freq
 		glm::vec3(0.0f, 1.0f, 0.0f) //rot_axis
 	);
 
@@ -146,7 +146,9 @@ int main()
 		camera.Position = player.get_position();
 		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		const float NEAR = 0.05f;
+		const float FAR = 512.0f;
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / SCR_HEIGHT, NEAR, FAR);
         glm::mat4 view = camera.GetViewMatrix();	
 
 		planet.draw(projection, view);
@@ -161,6 +163,7 @@ int main()
 	// ------------------------------------------------------------------
 
 	glfwTerminate();
+	utils_cleanup();
 	std::cout << "Exiting." << std::endl;
 	return 0;
 }

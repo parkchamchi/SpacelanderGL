@@ -12,12 +12,18 @@
 
 using namespace std;
 
+static Circle *circle = nullptr;
+
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
-	static Circle *circle = nullptr;
 	if (circle == nullptr)
 		circle = new Circle();
 
 	circle->draw(projection, view, location, radius);
+}
+
+void utils_cleanup() {
+	if (circle != nullptr)
+		delete circle;
 }
 
 Circle::Circle() {
