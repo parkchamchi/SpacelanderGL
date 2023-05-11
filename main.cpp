@@ -109,7 +109,7 @@ int main()
 		0.1f, //rot_freq
 		glm::vec3(0.0f, 1.0f, 0.0f) //rot_axis
 	);
-	
+
 	//Init. camera
 	planet.update();
 	glm::vec3 initial_position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
@@ -117,7 +117,35 @@ int main()
 	player.set_position(initial_position);
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
-	//float last_time = (float) glfwGetTime();
+
+	int VLEN = 10;
+	float PI = 3.14f;
+	float *vertices = new float[VLEN*3];
+	for (int i = 0; i < VLEN; i++) { //Skip the last
+		float angle = ((float) i / VLEN) * 2*PI;
+		vertices[i*3 + 0] = cos(angle) * 0.5f;
+		vertices[i*3 + 1] = sin(angle) * 0.5f;
+		vertices[i*3 + 2] = 0;
+	}
+	    Shader shader("shaders/monocolor.vs", "shaders/monocolor.fs");
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * VLEN * 3, vertices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    // glBindVertexArray(0);
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -136,6 +164,13 @@ int main()
 		// ------
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		shader.use();
+		shader.setVec4("aColor", glm::vec4(0, 0, 1, 1));
+
+        // render the triangle
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_LINE_LOOP, 0, VLEN);
 
 		planet.update();
 		camera.Position = player.get_position();
