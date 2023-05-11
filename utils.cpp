@@ -28,12 +28,11 @@ Circle::Circle() {
 	//Set `vertices`
 	vertices = new float[VLEN*3];
 	for (int i = 0; i < VLEN; i++) {
-		float angle = ((float) i / VLEN) * cos(2*PI);
+		float angle = ((float) i / VLEN) * 2*PI;
 		vertices[i*3 + 0] = cos(angle);
 		vertices[i*3 + 1] = 0.0f;
 		vertices[i*3 + 2] = sin(angle);
 	}
-
 
 	glBindVertexArray(0); //Unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
