@@ -118,34 +118,10 @@ int main()
 	player.set_position(initial_position);
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
-
-	int VLEN = 10;
-	float PI = 3.14f;
-	float *vertices = new float[VLEN*3];
-	for (int i = 0; i < VLEN; i++) { //Skip the last
-		float angle = ((float) i / VLEN) * 2*PI;
-		vertices[i*3 + 0] = cos(angle) * 0.5f;
-		vertices[i*3 + 1] = sin(angle) * 0.5f;
-		vertices[i*3 + 2] = 0;
-	}
-	    Shader shader("shaders/monocolor.vs", "shaders/monocolor.fs");
-
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * VLEN * 3, vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0);
+	/* Why are these lines needed for the planet model not to crash? */	
+	unsigned int VBO;
+   	glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); //Critical
 
 	// render loop
 	// -----------
@@ -166,8 +142,6 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		
-
 		planet.update();
 		camera.Position = player.get_position();
 		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
@@ -176,26 +150,6 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();	
 
 		planet.draw(projection, view);
-
-		/////////////////////////////////////////////
-		shader.use();
-		shader.setVec4("aColor", glm::vec4(0, 0, 1, 1));
-
-		glm::vec3 planetpos = planet.get_position();
-
-		glm::mat4 c_model = glm::mat4(1.0f);
-		c_model = glm::translate(c_model, planetpos);
-		c_model = glm::scale(c_model, glm::vec3(planet.get_radius() * 2.5));
-		std::cout << glm::to_string(planetpos) << glm::to_string(c_model) << std::endl;
-
-		shader.setMat4("model", c_model);
-		shader.setMat4("projection", projection);
-		shader.setMat4("view", view);
-
-        // render the triangle
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_LINE_LOOP, 0, VLEN);
-		////////////////////////////////////////////
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

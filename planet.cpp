@@ -72,9 +72,5 @@ glm::vec3 Planet::get_position() {
 
 void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
 	draw_circle(projection, view, glm::vec3(0, 0, 0), orbit_radius);
-	draw_circle(projection, view, position, radius * 4);
-	draw_circle(projection, view, position, radius * 2);
-	draw_circle(projection, view, position, radius);
-	draw_circle(projection, view, position, radius / 2);
-	draw_circle(projection, view, position, 1.0f);
+	draw_circle(projection, view, position, radius * 1.1f);
 }

@@ -30,8 +30,8 @@ Circle::Circle() {
 		vertices[i*3 + 2] = sin(angle);
 	}
 
-	glBindVertexArray(0); //Unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0); //Unbind
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//Set VAO
 	glGenVertexArrays(1, &VAO);
@@ -44,6 +44,7 @@ Circle::Circle() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void *) 0);
 	glEnableVertexAttribArray(0);
 
+	//Unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0); //Unbind
 
@@ -53,14 +54,14 @@ Circle::Circle() {
 
 void Circle::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
 	shader->use();
-	shader->setVec4("aColor", GREEN_VEC4);
+	shader->setVec4("aColor", glm::vec4(0, 1, 0, 1));
 
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, location);
-	model = glm::scale(model, glm::vec3(radius * 2));
+	model = glm::scale(model, glm::vec3(radius));
 	shader->setMat4("model", model);
 
 	glBindVertexArray(VAO);
