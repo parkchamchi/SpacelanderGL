@@ -18,12 +18,10 @@ string to_string(glm::vec3 vec) {
 
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
 	static Circle *circle = nullptr;
-	if (circle == nullptr) {
+	if (circle == nullptr)
 		circle = new Circle();
-		std::cout << "new" << std::endl;
-	}
 
-	/*circle->draw(projection, view, location, radius);*/
+	circle->draw(projection, view, location, radius);
 }
 
 Circle::Circle() {
@@ -35,6 +33,7 @@ Circle::Circle() {
 		vertices[i*3 + 1] = 0.0f;
 		vertices[i*3 + 2] = sin(angle);
 	}
+
 
 	glBindVertexArray(0); //Unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -50,11 +49,11 @@ Circle::Circle() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void *) 0);
 	glEnableVertexAttribArray(0);
 
-	glBindVertexArray(0); //Unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0); //Unbind
 
 	//Set shader
-	shader = new Shader("shaders/default.vs", "shaders/monocolor.fs");
+	shader = new Shader("shaders/monocolor.vs", "shaders/monocolor.fs");
 }
 
 void Circle::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
@@ -70,7 +69,7 @@ void Circle::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, floa
 	shader->setMat4("model", model);
 
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_LINES, 0, VLEN);
+	glDrawArrays(GL_LINE_LOOP, 0, VLEN);
 }
 
 Circle::~Circle() {
