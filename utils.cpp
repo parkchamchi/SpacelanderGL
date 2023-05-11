@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -17,10 +18,12 @@ string to_string(glm::vec3 vec) {
 
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
 	static Circle *circle = nullptr;
-	if (circle == nullptr)
+	if (circle == nullptr) {
 		circle = new Circle();
+		std::cout << "new" << std::endl;
+	}
 
-	circle->draw(projection, view, location, radius);
+	/*circle->draw(projection, view, location, radius);*/
 }
 
 Circle::Circle() {
@@ -33,16 +36,22 @@ Circle::Circle() {
 		vertices[i*3 + 2] = sin(angle);
 	}
 
+	glBindVertexArray(0); //Unbind
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	//Set VAO
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
 	glGenVertexArrays(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 3 * VLEN * sizeof (float), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void *) 0);
 	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0); //Unbind
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//Set shader
 	shader = new Shader("shaders/default.vs", "shaders/monocolor.fs");

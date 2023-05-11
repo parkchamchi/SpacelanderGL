@@ -59,7 +59,7 @@ void Planet::draw(glm::mat4 projection, glm::mat4 view) {
 
 	drawable->draw(shader);
 
-	//draw_orbit(projection, view);
+	draw_orbit(projection, view);
 }
 
 float Planet::get_radius() {
