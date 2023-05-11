@@ -58,6 +58,8 @@ void Planet::draw(glm::mat4 projection, glm::mat4 view) {
 	shader->setMat4("model", model);
 
 	drawable->draw(shader);
+
+	//draw_orbit(projection, view);
 }
 
 float Planet::get_radius() {
@@ -68,13 +70,6 @@ glm::vec3 Planet::get_position() {
 	return position;
 }
 
-void Planet::draw_orbit(int vertices_count) {
-	float vertices[vertices_count * 3];
-	for (int i = 0; i < vertices_count; i++) {
-		float angle = (2 * PI) / vertices_count * i;
-
-		vertices[3*i + 0] = std::cos(angle) * radius;
-		vertices[3*i + 1] = 0.0f;
-		vertices[3*i + 2] = std::sin(angle) * radius;
-	}
+void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
+	draw_circle(projection, view, glm::vec3(0, 0, 0), radius);
 }

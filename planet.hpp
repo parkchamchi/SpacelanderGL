@@ -22,7 +22,7 @@ public:
 	glm::vec3 get_position();
 
 private:
-	void draw_orbit(int vertices_count=360);
+	void draw_orbit(glm::mat4 projection, glm::mat4 view);
 
 	Drawable *drawable;
 	Shader *shader;
