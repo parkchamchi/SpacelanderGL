@@ -118,11 +118,6 @@ int main()
 	player.set_position(initial_position);
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
-	/* Why are these lines needed for the planet model not to crash? */	
-	unsigned int VBO;
-   	glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); //Critical
-
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))

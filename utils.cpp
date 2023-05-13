@@ -54,7 +54,7 @@ Circle::Circle() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	glGenVertexArrays(1, &VBO);
+	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, 3 * VLEN * sizeof (float), vertices, GL_STATIC_DRAW);
 
@@ -102,7 +102,7 @@ Line::Line() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	glGenVertexArrays(1, &VBO);
+	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, 3 * VLEN * sizeof (float), vertices, GL_STATIC_DRAW);
 
