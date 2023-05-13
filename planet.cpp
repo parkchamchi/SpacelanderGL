@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -73,4 +74,5 @@ glm::vec3 Planet::get_position() {
 void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
 	draw_circle(projection, view, glm::vec3(0, 0, 0), orbit_radius);
 	draw_circle(projection, view, position, radius * 1.1f);
+	draw_line(projection, view, glm::vec3(0, 0, 0), position);
 }
