@@ -16,18 +16,18 @@ using namespace std;
 static Circle *circle = nullptr;
 static Line *line = nullptr;
 
-void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
+void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius, glm::vec4 color) {
 	if (circle == nullptr)
 		circle = new Circle();
 
-	circle->draw(projection, view, location, radius);
+	circle->draw(projection, view, location, radius, color);
 }
 
-void draw_line(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q) {
+void draw_line(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q, glm::vec4 color) {
 	if (line == nullptr)
 		line = new Line();
 
-	line->draw(projection, view, p, q);
+	line->draw(projection, view, p, q, color);
 }
 
 void utils_cleanup() {
@@ -69,9 +69,9 @@ Circle::Circle() {
 	shader = new Shader("shaders/monocolor.vs", "shaders/monocolor.fs");
 }
 
-void Circle::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius) {
+void Circle::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius, glm::vec4 color) {
 	shader->use();
-	shader->setVec4("aColor", glm::vec4(0, 1, 0, 1));
+	shader->setVec4("aColor", color);
 
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
@@ -117,9 +117,9 @@ Line::Line() {
 	shader = new Shader("shaders/monocolor.vs", "shaders/monocolor.fs");
 }
 
-void Line::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q) {
+void Line::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q, glm::vec4 color) {
 	shader->use();
-	shader->setVec4("aColor", glm::vec4(0, 1, 0, 1));
+	shader->setVec4("aColor", color);
 
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);

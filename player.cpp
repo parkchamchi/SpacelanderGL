@@ -1,8 +1,11 @@
 #include "player.hpp"
+#include "utils.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <iostream>
 
 Player::Player(glm::vec3 position, float pitch, float yaw) : position(position), pitch(pitch), yaw(yaw) {
 	velocity = glm::vec3(0.0f);
@@ -42,4 +45,12 @@ glm::vec3 Player::get_front() {
 	front = glm::normalize(front);
 
 	return front;
+}
+
+void Player::draw_lines(glm::mat4 projection, glm::mat4 view, glm::vec3 planet_pos) {
+	glm::vec3 front_pos = position + get_front();
+	glm::vec3 velocity_pos = front_pos + velocity * 5.0f;
+
+	draw_line(projection, view, front_pos, velocity_pos, glm::vec4(1, 1, 0, 1)); //yellow
+	draw_line(projection, view, velocity_pos, planet_pos, glm::vec4(1, 1, 1, 1)); //white
 }

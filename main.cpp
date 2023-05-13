@@ -115,7 +115,7 @@ int main()
 	planet.update();
 	glm::vec3 initial_position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
 	camera.Position = initial_position;
-	player.set_position(initial_position);
+	player.set_position(initial_position + glm::vec3(0, 4, 0));
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
 	// render loop
@@ -147,6 +147,7 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();	
 
 		planet.draw(projection, view);
+		player.draw_lines(projection, view, planet.get_position());
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
