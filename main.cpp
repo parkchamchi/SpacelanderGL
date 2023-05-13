@@ -138,6 +138,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		planet.update();
+		glm::vec3 gravity = planet.get_gravity(player.get_position());
+		player.add_gravity(gravity);
 		camera.Position = player.get_position();
 		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 

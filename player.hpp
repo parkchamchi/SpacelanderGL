@@ -5,6 +5,7 @@ public:
 	Player(glm::vec3 position, float front, float yaw);
 
 	void process_input(float forward_offset, float pitch_offset, float yaw_offset);
+	void add_gravity(glm::vec3 gravity);
 
 	glm::vec3 get_position();
 	void set_position(glm::vec3 position); //init.
@@ -20,4 +21,5 @@ private:
 	float yaw;
 
 	glm::vec3 velocity;
+	glm::vec3 last_gravity;
 };

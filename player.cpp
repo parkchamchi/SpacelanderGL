@@ -4,11 +4,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 
 Player::Player(glm::vec3 position, float pitch, float yaw) : position(position), pitch(pitch), yaw(yaw) {
 	velocity = glm::vec3(0.0f);
+	last_gravity = glm::vec3(0.0f);
 }
 
 void Player::process_input(float forward_offset, float pitch_offset, float yaw_offset) {
@@ -18,6 +20,11 @@ void Player::process_input(float forward_offset, float pitch_offset, float yaw_o
 	const float forward_sensitivity = 0.01f;
 	velocity += get_front() * forward_offset * forward_sensitivity;
 	position += velocity;
+}
+
+void Player::add_gravity(glm::vec3 gravity) {
+	velocity += gravity;
+	last_gravity = gravity;
 }
 
 void Player::set_position(glm::vec3 position) {
@@ -48,8 +55,9 @@ glm::vec3 Player::get_front() {
 }
 
 void Player::draw_lines(glm::mat4 projection, glm::mat4 view, glm::vec3 planet_pos) {
+	const float multiplier = 5.0f;
 	glm::vec3 front_pos = position + get_front();
-	glm::vec3 velocity_pos = front_pos + velocity * 5.0f;
+	glm::vec3 velocity_pos = front_pos + velocity * multiplier;
 
 	draw_line(projection, view, front_pos, velocity_pos, glm::vec4(1, 1, 0, 1)); //yellow
 	draw_line(projection, view, velocity_pos, planet_pos, glm::vec4(1, 1, 1, 1)); //white

@@ -21,6 +21,8 @@ public:
 	float get_radius();
 	glm::vec3 get_position();
 
+	glm::vec3 get_gravity(glm::vec3 target);
+
 private:
 	void draw_orbit(glm::mat4 projection, glm::mat4 view);
 

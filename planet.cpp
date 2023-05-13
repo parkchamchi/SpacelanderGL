@@ -71,6 +71,24 @@ glm::vec3 Planet::get_position() {
 	return position;
 }
 
+glm::vec3 Planet::get_gravity(glm::vec3 target) {
+	//target TO this->position
+	glm::vec3 diff = position - target;
+
+	float dist = glm::length(diff);
+	glm::vec3 dir = glm::normalize(diff);
+
+	/*
+	G * Mm / dist^2 = G'*m*rho*rad^3 / dist^2
+	Assuming m never changes,
+		K * rho * rad^3 / dist^2
+	*/
+
+	const float KRHO = 0.00001f;
+	float mag = KRHO * std::pow(radius, 3) / std::pow(dist, 2);
+	return mag * dir;
+}
+
 void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
 	draw_circle(projection, view, glm::vec3(0, 0, 0), orbit_radius); //orbit
 	draw_circle(projection, view, position, radius * 1.1f); //to the planet
