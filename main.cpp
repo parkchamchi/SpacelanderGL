@@ -118,6 +118,17 @@ int main()
 			shader->setVec3("dirLight.ambient", glm::vec3(0.4f));
 			shader->setVec3("dirLight.diffuse", glm::vec3(0.8f));
 			shader->setVec3("dirLight.specular", glm::vec3(0.1f));
+
+			shader->setVec3("spotLight.position", camera.Position);
+			shader->setVec3("spotLight.direction", camera.Front);
+			shader->setVec3("spotLight.ambient", glm::vec3(0.0f));
+			shader->setVec3("spotLight.diffuse", glm::vec3(0.1f));
+			shader->setVec3("spotLight.specular", glm::vec3(0.1f));
+			shader->setFloat("spotLight.constant", 1.0f);
+			shader->setFloat("spotLight.linear", 0.045f);
+			shader->setFloat("spotLight.quadratic", 0.0075f);
+			shader->setFloat("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+			shader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
 		}
 	);
 
