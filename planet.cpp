@@ -94,8 +94,10 @@ glm::vec3 Planet::get_gravity(glm::vec3 target) {
 }
 
 void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
-	draw_circle(projection, view, glm::vec3(0, 0, 0), orbit_radius); //orbit
+	draw_circle(projection, view, glm::vec3(0), orbit_radius); //orbit
 	draw_circle(projection, view, position, radius * 1.1f); //to the planet
 
-	draw_line(projection, view, glm::vec3(0, 0, 0), position); //to the sun;
+	draw_line(projection, view, glm::vec3(0), position); //to the sun;
+
+	draw_cube(projection, view, glm::vec3(0));
 }

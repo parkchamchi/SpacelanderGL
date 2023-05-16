@@ -20,12 +20,12 @@ public:
 	Shape(int vlen, GLenum mode);
 	~Shape();
 
-	void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float scale, glm::vec4 color);
+	virtual void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float scale, glm::vec4 color);
 
 protected:
-	int get_vlen();
-	float *get_vertices();
-	void apply_vertices();
+	int get_vlen(); //# of vertices
+	float *get_vertices(); //float[vlen * 3]
+	void apply_vertices(); //Should be called after changing `vertices`
 
 private:
 	GLenum mode;
@@ -50,11 +50,11 @@ public:
 	void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q, glm::vec4 color);
 };
 
-class Cube {
+class Cube : public Shape {
 public:
 	Cube();
 
-	void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float size, glm::vec4 color);
+	//void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float size, glm::vec4 color);
 };
 
 static Circle *circle = nullptr;
@@ -73,6 +73,13 @@ void draw_line(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q, g
 		line = new Line();
 
 	line->draw(projection, view, p, q, color);
+}
+
+void draw_cube(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float size, glm::vec4 color) {
+	if (cube == nullptr)
+		cube = new Cube();
+
+	cube->draw(projection, view, location, size, color);
 }
 
 void utils_cleanup() {
@@ -183,4 +190,56 @@ void Line::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 p, glm::vec3 q, 
 	apply_vertices();
 
 	Shape::draw(projection, view, glm::vec3(0), 1, color);
+}
+
+Cube::Cube() : Shape(36, GL_TRIANGLES) {
+	int vlen = get_vlen();
+	float *vertices = get_vertices();
+	
+	float new_vertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+	memcpy(vertices, new_vertices, sizeof (new_vertices));
+	apply_vertices();
 }
