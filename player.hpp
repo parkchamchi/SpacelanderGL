@@ -1,3 +1,6 @@
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
+
 #include <glm/glm.hpp>
 
 class Player {
@@ -23,3 +26,5 @@ private:
 	glm::vec3 velocity;
 	glm::vec3 last_gravity;
 };
+
+#endif

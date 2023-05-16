@@ -1,3 +1,6 @@
+#ifndef PLANET_HPP
+#define PLANET_HPP
+
 #include <glm/glm.hpp>
 #include <learnopengl/shader_m.h>
 
@@ -44,3 +47,5 @@ private:
 
 	ExtraShaderOpT extra_shader_op;
 };
+
+#endif
