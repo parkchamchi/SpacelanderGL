@@ -21,12 +21,14 @@ Planet::Planet(
 	Drawable *drawable, Shader *shader,
 	float radius,
 	float orbit_freq, float orbit_radius,
-	float rot_freq, glm::vec3 rot_axis
+	float rot_freq, glm::vec3 rot_axis,
+	ExtraShaderOpT extra_shader_op
 ) 
 	: drawable(drawable), shader(shader),
 	radius(radius),
 	orbit_freq(orbit_freq), orbit_radius(orbit_radius),
-	rot_freq(rot_freq), rot_axis(rot_axis)
+	rot_freq(rot_freq), rot_axis(rot_axis),
+	extra_shader_op(extra_shader_op)
 {
 	position = glm::vec3(radius, 0.0f, 0.0f);
 	model = glm::mat4(1.0f);
@@ -55,8 +57,10 @@ void Planet::draw(glm::mat4 projection, glm::mat4 view) {
 
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
-
 	shader->setMat4("model", model);
+
+	if (extra_shader_op != nullptr)
+		extra_shader_op(shader, this);
 
 	drawable->draw(shader);
 

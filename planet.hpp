@@ -1,6 +1,9 @@
 #include <glm/glm.hpp>
 #include <learnopengl/shader_m.h>
 
+class Planet;
+using ExtraShaderOpT = void (*)(Shader *, Planet *);
+
 class Drawable {
 public:	
 	virtual void draw(Shader *shader) = 0;
@@ -12,7 +15,8 @@ public:
 		Drawable *drawable, Shader *shader,
 		float radius,
 		float orbit_freq, float orbit_radius,
-		float rot_freq, glm::vec3 rot_axis
+		float rot_freq, glm::vec3 rot_axis,
+		ExtraShaderOpT extra_shader_op=nullptr
 	);
 
 	void update();
@@ -37,4 +41,6 @@ private:
 
 	glm::vec3 position;
 	glm::mat4 model;
+
+	ExtraShaderOpT extra_shader_op;
 };

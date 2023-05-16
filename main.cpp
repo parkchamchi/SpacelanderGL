@@ -41,9 +41,6 @@ Player player(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 90.0f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-// lighting
-//glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
 //To bypass the stbi error
 class DrawableModel : public Drawable {
 public:
@@ -98,17 +95,30 @@ int main()
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	Shader defaultShader("shaders/default.vs", "shaders/default.fs");
+	Shader planetShader("shaders/planet.vs", "shaders/planet.fs");
 	Model planet_model("resources/mars/mars.obj");
 	DrawableModel planet_drawable_model(&planet_model);
 
 	Planet planet(
-		&planet_drawable_model, &defaultShader,
+		&planet_drawable_model, &planetShader,
 		5.0f, //radius
 		0.01f, //orbit_freq
 		100.0f, //orbit_radius
 		0.05f, //rot_freq
-		glm::vec3(0.0f, 1.0f, 0.0f) //rot_axis
+		glm::vec3(0.0f, 1.0f, 0.0f), //rot_axis
+		
+		[](Shader *shader, Planet *planet) {
+			shader->setInt("material.diffuse", 0);
+			shader->setInt("material.specular", 0);
+			shader->setFloat("material.shininess", 1.0f);
+
+			shader->setVec3("viewPos", camera.Position);
+
+			shader->setVec3("dirLight.direction", planet->get_position());
+			shader->setVec3("dirLight.ambient", glm::vec3(0.4f));
+			shader->setVec3("dirLight.diffuse", glm::vec3(0.8f));
+			shader->setVec3("dirLight.specular", glm::vec3(0.1f));
+		}
 	);
 
 	//Init. camera
