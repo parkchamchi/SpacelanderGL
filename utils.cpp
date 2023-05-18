@@ -342,7 +342,7 @@ Cubemap::Cubemap(unsigned int texture) : Cube() {
 
 void Cubemap::draw(glm::mat4 projection, glm::mat4 view) {
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-	Cube::draw(projection, view, glm::vec3(10, 10, 10), 1, glm::vec4(1)); //all vars except proj and view are dummy vars
+	Cube::draw(projection, glm::mat3(view), glm::vec3(10, 10, 10), 1, glm::vec4(1)); //all vars except proj and view are dummy vars + remove trans.
 	glDepthFunc(GL_LESS); // set depth function back to default
 }
 
