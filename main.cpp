@@ -24,6 +24,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 //unsigned int loadTexture(const char *path);
+unsigned int load_cubemap(vector<std::string> faces);
 
 // settings
 const unsigned int SCR_WIDTH = 1600;
@@ -136,6 +137,17 @@ int main() {
 	player.set_position(initial_position + glm::vec3(0, 4, 0));
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
 
+	//Set cubemap texture
+	vector<std::string> faces {
+        "resources/textures/skybox/right.jpg",
+        "resources/textures/skybox/left.jpg",
+        "resources/textures/skybox/top.jpg",
+        "resources/textures/skybox/bottom.jpg",
+        "resources/textures/skybox/front.jpg",
+        "resources/textures/skybox/back.jpg"
+    };
+    unsigned int cubemap_texture = load_cubemap(faces);
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window)) {
@@ -167,6 +179,8 @@ int main() {
 
 		planet.draw(projection, view);
 		player.draw_lines(projection, view, planet.get_position());
+
+		draw_cubemap(projection, view, cubemap_texture);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -291,7 +305,7 @@ unsigned int loadTexture(char const * path) {
 // +Z (front) 
 // -Z (back)
 // -------------------------------------------------------
-unsigned int loadCubemap(vector<std::string> faces) {
+unsigned int load_cubemap(vector<std::string> faces) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);

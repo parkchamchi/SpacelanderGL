@@ -12,8 +12,22 @@
 
 #include <cmath>
 #include <iostream>
+#include <vector>
+#include <tuple>
 
 using namespace std;
+
+class Textures {
+public:
+	Textures();
+	~Textures();
+	
+	void add_texture(unsigned int texture, GLenum target);
+	void use();
+
+private:
+	vector<tuple<unsigned int, GLenum>> *textures;
+};
 
 class Shape {
 public:
@@ -27,6 +41,10 @@ protected:
 	float *get_vertices(); //float[vlen * 3]
 	void apply_vertices(); //Should be called after changing `vertices`
 
+	void set_shader(Shader *shader); //Override the default shader
+	//Shader *get_shader();
+	void set_textures(Textures *textures);
+
 private:
 	GLenum mode;
 	int vlen;
@@ -34,6 +52,8 @@ private:
 	float *vertices;
 	unsigned int VAO, VBO;
 	Shader *shader;
+
+	Textures *textures;
 };
 
 class Circle : public Shape {
@@ -53,13 +73,27 @@ public:
 class Cube : public Shape {
 public:
 	Cube();
+};
 
-	//void draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float size, glm::vec4 color);
+class Cubemap : public Cube {
+public:
+	Cubemap(unsigned int texture);
+	~Cubemap();
+
+	void draw(glm::mat4 projection, glm::mat4 view);
+
+	unsigned int get_texture() const;
+	bool operator==(const Cubemap &o) const;
+
+private:
+	unsigned int texture; //for operator==
+	Textures *textures;
 };
 
 static Circle *circle = nullptr;
 static Line *line = nullptr;
 static Cube *cube = nullptr;
+static Cubemap *cubemap = nullptr;
 
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius, glm::vec4 color) {
 	if (circle == nullptr)
@@ -82,6 +116,15 @@ void draw_cube(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float s
 	cube->draw(projection, view, location, size, color);
 }
 
+void draw_cubemap(glm::mat4 projection, glm::mat4 view, unsigned int cubemap_texture) {
+	if (cubemap != nullptr && cubemap->get_texture() != cubemap_texture)
+		cubemap = nullptr;
+	if (cubemap == nullptr)
+		cubemap = new Cubemap(cubemap_texture);
+
+	cubemap->draw(projection, view);
+}
+
 void utils_cleanup() {
 	if (circle != nullptr)
 		delete circle;
@@ -89,6 +132,28 @@ void utils_cleanup() {
 		delete line;
 	if (cube != nullptr)
 		delete cube;
+	if (cubemap != nullptr)
+		delete cubemap;
+}
+
+Textures::Textures() {
+	textures = new vector<tuple<unsigned int, GLenum>>();
+}
+
+void Textures::add_texture(unsigned int texture, GLenum target) {
+	textures->push_back(make_tuple(texture, target));
+}
+
+void Textures::use() {
+	int i = 0;
+	for (auto tex_and_mode : *textures) {
+		glActiveTexture(GL_TEXTURE0 + (i++));
+		glBindTexture(get<1>(tex_and_mode), get<0>(tex_and_mode));
+	}
+}
+
+Textures::~Textures() {
+	delete textures;
 }
 
 Shape::Shape(int vlen, GLenum mode) : vlen(vlen), mode(mode) {
@@ -115,6 +180,8 @@ Shape::Shape(int vlen, GLenum mode) : vlen(vlen), mode(mode) {
 
 	//Set vertices
 	vertices = new float[vlen*3];
+
+	textures = nullptr;
 }
 
 int Shape::get_vlen() {
@@ -130,6 +197,20 @@ void Shape::apply_vertices() {
     glBufferData(GL_ARRAY_BUFFER, vlen * 3 * sizeof(float), vertices, GL_STATIC_DRAW);
 }
 
+void Shape::set_shader(Shader *shader) {
+	this->shader = shader;
+}
+
+/*
+Shader *Shape::get_shader() {
+	return shader;
+}
+*/
+
+void Shape::set_textures(Textures *textures) {
+	this->textures = textures;
+}
+
 void Shape::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float scale, glm::vec4 color) {
 	shader->use();
 	shader->setVec4("aColor", color);
@@ -143,6 +224,9 @@ void Shape::draw(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float
 	shader->setMat4("model", model);
 
 	glBindVertexArray(VAO);
+	if (textures != nullptr) {
+		textures->use(); 
+	}
 	glDrawArrays(mode, 0, vlen);	
 }
 
@@ -242,4 +326,34 @@ Cube::Cube() : Shape(36, GL_TRIANGLES) {
     };
 	memcpy(vertices, new_vertices, sizeof (new_vertices));
 	apply_vertices();
+}
+
+Cubemap::Cubemap(unsigned int texture) : Cube() {
+	Shader *shader = new Shader("shaders/cubemap.vs", "shaders/cubemap.fs");
+	shader->use();
+	shader->setInt("skybox", 0);
+	set_shader(shader);
+	
+	textures = new Textures();
+	textures->add_texture(texture, GL_TEXTURE_CUBE_MAP);
+	set_textures(textures);
+	this->texture = texture;
+}
+
+void Cubemap::draw(glm::mat4 projection, glm::mat4 view) {
+	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	Cube::draw(projection, view, glm::vec3(10, 10, 10), 1, glm::vec4(1)); //all vars except proj and view are dummy vars
+	glDepthFunc(GL_LESS); // set depth function back to default
+}
+
+bool Cubemap::operator==(const Cubemap &o) const {
+	return this->get_texture() == o.get_texture();
+}
+
+unsigned int Cubemap::get_texture() const {
+	return texture;
+}
+
+Cubemap::~Cubemap() {
+	delete textures;
 }
