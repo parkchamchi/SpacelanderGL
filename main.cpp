@@ -87,7 +87,7 @@ int main() {
 	}
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
 	// configure global opengl state
 	// -----------------------------
@@ -132,7 +132,7 @@ int main() {
 
 	//Init. camera
 	planet.update();
-	glm::vec3 initial_position = planet.get_position() + glm::vec3(0.0f, 0.0f, -2 * planet.get_radius());
+	glm::vec3 initial_position = planet.get_position() + glm::vec3(0.0f, 1.0f, -2 * planet.get_radius());
 	camera.Position = initial_position;
 	player.set_position(initial_position + glm::vec3(0, 4, 0));
 	player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
