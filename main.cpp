@@ -166,8 +166,7 @@ int main() {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		planet.update();
-		glm::vec3 gravity = planet.get_gravity(player.get_position());
+		glm::vec3 gravity = planet.get_gravity(player.get_position(), deltaTime);
 		player.add_gravity(gravity);
 		camera.Position = player.get_position();
 		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
@@ -177,6 +176,7 @@ int main() {
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / SCR_HEIGHT, NEAR, FAR);
         glm::mat4 view = camera.GetViewMatrix();	
 
+		planet.update();
 		planet.draw(projection, view);
 		player.draw_lines(projection, view, planet.get_position());
 
