@@ -35,6 +35,10 @@ glm::vec3 Player::get_position() {
 	return position;
 }
 
+glm::vec3 Player::get_velocity() {
+	return velocity;
+}
+
 void Player::get_camera_vecs(glm::vec3 *front, glm::vec3 *right, glm::vec3 *up) {
 	*front = get_front();
 

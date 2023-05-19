@@ -150,6 +150,7 @@ int main() {
 
 	// render loop
 	// -----------
+	bool landed = false;
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
 		// --------------------
@@ -163,6 +164,7 @@ int main() {
 
 		// render
 		// ------
+
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -174,13 +176,27 @@ int main() {
 		const float NEAR = 0.05f;
 		const float FAR = 512.0f;
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / SCR_HEIGHT, NEAR, FAR);
-        glm::mat4 view = camera.GetViewMatrix();	
+		glm::mat4 view = camera.GetViewMatrix();	
 
 		planet.update();
 		planet.draw(projection, view);
 		player.draw_lines(projection, view, planet.get_position());
 
 		draw_cubemap(projection, view, cubemap_texture);
+
+		//Calculate the distance
+		if (!landed) {
+			float dist = glm::distance(planet.get_position(), player.get_position()) - planet.get_radius();
+			glm::vec3 land_velocity = player.get_velocity();
+			float speed = glm::length(land_velocity);
+			float angle = glm::acos(glm::dot(glm::normalize(land_velocity), glm::normalize(planet.get_position() - player.get_position())));
+
+			if (dist > NEAR*2)
+				//std::cout << '\r' << "Distance: " << dist << ", Speed: " << speed << ", Angle: " << glm::degrees(angle);
+				printf("\rDistance: %.2f, Speed: %.2f, Angle: %.2f", dist, speed, glm::degrees(angle));
+			else
+				landed = true; //End
+		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -193,7 +209,7 @@ int main() {
 
 	glfwTerminate();
 	utils_cleanup();
-	std::cout << "Exiting." << std::endl;
+	std::cout << "\nExiting." << std::endl;
 	return 0;
 }
 

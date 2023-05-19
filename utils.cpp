@@ -146,7 +146,7 @@ void Textures::add_texture(unsigned int texture, GLenum target) {
 
 void Textures::use() {
 	int i = 0;
-	for (auto tex_and_mode : *textures) {
+	for (auto &tex_and_mode : *textures) {
 		glActiveTexture(GL_TEXTURE0 + (i++));
 		glBindTexture(get<1>(tex_and_mode), get<0>(tex_and_mode));
 	}
