@@ -44,6 +44,8 @@ void Player::get_camera_vecs(glm::vec3 *front, glm::vec3 *right, glm::vec3 *up) 
 
 	const glm::vec3 WORLDUP(0.0f, 1.0f, 0.0f);
 	*right = glm::normalize(glm::cross(*front, WORLDUP));
+	if (cos(pitch) < 0)
+		*right *= (-1);
 
 	*up = glm::normalize(glm::cross(*right, *front));
 }

@@ -99,5 +99,6 @@ void Planet::draw_orbit(glm::mat4 projection, glm::mat4 view) {
 
 	draw_line(projection, view, glm::vec3(0), position); //to the sun;
 
+	draw_line(projection, view, glm::vec3(0), glm::vec3(0, 3, 0));
 	draw_cube(projection, view, glm::vec3(0));
 }
