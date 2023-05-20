@@ -3,8 +3,9 @@
 Move the spaceship to land on the planet.
 
 ## Control
-- WASD: moves the camera
+- WASD: Moves the camera.
 - Brackets (`[`, `]`): Accelerates/Decelerates the spaceship.
+- R: Resets the score.
 
 ## HUD
 - Green lines: The orbit of the planet

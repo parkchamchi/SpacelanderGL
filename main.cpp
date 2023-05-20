@@ -42,6 +42,8 @@ Player player(glm::vec3(0.0f), 0.0f, 90.0f);
 float delta_time = 0.0f;
 float last_frame = 0.0f;
 
+bool landed = false;
+
 //To bypass the stbi error (Should be included in only one translation unit)
 class DrawableModel : public Drawable {
 public:
@@ -152,7 +154,6 @@ int main() {
 
 	// render loop
 	// -----------
-	bool landed = false;
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
 		// --------------------
@@ -264,6 +265,9 @@ void process_input(GLFWwindow *window) {
 		forward_offset -= delta_time;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
 		forward_offset += delta_time;
+
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		landed = false; //Reset
 
 	player.process_input(forward_offset, pitch_offset, yaw_offset);
 }
