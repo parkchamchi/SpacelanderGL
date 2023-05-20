@@ -22,7 +22,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void process_input(GLFWwindow *window);
 //unsigned int loadTexture(const char *path);
 unsigned int load_cubemap(vector<std::string> faces);
 
@@ -31,18 +31,18 @@ const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
+Camera camera(glm::vec3(0, 0, 5), glm::vec3(0, 1, 0), 0, 0);
+//float lastX = SCR_WIDTH / 2.0f;
+//float lastY = SCR_HEIGHT / 2.0f;
+//bool firstMouse = true;
 
-Player player(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 90.0f);
+Player player(glm::vec3(0.0f), 0.0f, 90.0f);
 
 // timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
+float delta_time = 0.0f;
+float last_frame = 0.0f;
 
-//To bypass the stbi error
+//To bypass the stbi error (Should be included in only one translation unit)
 class DrawableModel : public Drawable {
 public:
 	DrawableModel(Model *model) : model(model) {}
@@ -87,18 +87,20 @@ int main() {
 	}
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+	//For some reason turning on flips the cubemaps' textures. I assume this also flips the planet's texture...
+	//To bypass this, just set this on `load_cubemap()` function.
     //stbi_set_flip_vertically_on_load(true);
 
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	Shader planetShader("shaders/planet.vs", "shaders/planet.fs");
+	Shader planet_shader("shaders/planet.vs", "shaders/planet.fs");
 	Model planet_model("resources/mars/mars.obj");
 	DrawableModel planet_drawable_model(&planet_model);
 
 	Planet planet(
-		&planet_drawable_model, &planetShader,
+		&planet_drawable_model, &planet_shader,
 		5.0f, //radius
 		0.01f, //orbit_freq
 		100.0f, //orbit_radius
@@ -154,13 +156,13 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
 		// --------------------
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		float current_frame = static_cast<float>(glfwGetTime());
+		delta_time = current_frame - last_frame;
+		last_frame = current_frame;
 
 		// input
 		// -----
-		processInput(window);
+		process_input(window);
 
 		// render
 		// ------
@@ -168,7 +170,7 @@ int main() {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::vec3 gravity = planet.get_gravity(player.get_position(), deltaTime);
+		glm::vec3 gravity = planet.get_gravity(player.get_position(), delta_time);
 		player.add_gravity(gravity);
 		camera.Position = player.get_position();
 		player.get_camera_vecs(&camera.Front, &camera.Right, &camera.Up);
@@ -186,29 +188,34 @@ int main() {
 
 		//Calculate the distance
 		if (!landed) {
-			float dist = glm::distance(planet.get_position(), player.get_position()) - planet.get_radius();
+			glm::vec3 player_to_planet = planet.get_position() - player.get_position();
 			glm::vec3 land_velocity = player.get_velocity();
+
+			float dist = glm::length(player_to_planet) - planet.get_radius();
 			float speed = glm::length(land_velocity);
+
 			//Angle between the player's velocity and the direction beween the player and the planet. Degrees.
 			float angle = glm::degrees(glm::acos(
-				glm::dot(glm::normalize(land_velocity), glm::normalize(planet.get_position() - player.get_position()))));
+				glm::dot(glm::normalize(land_velocity), glm::normalize(player_to_planet))));
 
+			//Print
 			if (dist > NEAR*2)
 				//std::cout << '\r' << "Distance: " << dist << ", Speed: " << speed << ", Angle: " << angle;
 				printf("\rDistance: %.2f, Speed: %.4f, Angle: %.2f", dist, speed, angle);
 			else {
 				landed = true; //End
 
-				//Score
-				// 1 / (speed * angle)
 				/*
+				Score using the values on the land
 				Speed: `100` on 0.01, `0` on 0.1
 				Angle: `100` on 0, `0` on 360.
 				*/
 				float speed_score = -1000 * speed + 110;
 				if (speed_score > 100) speed_score = 100;
 				if (speed_score < 0) speed_score = 0;
+
 				float angle_score = (-5.0f/18) * angle + 100;
+
 				putchar('\n');
 				printf("Speed score: %.2f\n", speed_score);
 				printf("Angle score: %.2f\n", angle_score);
@@ -238,25 +245,25 @@ int main() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window) {
+void process_input(GLFWwindow *window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
 	float forward_offset = 0.0f, pitch_offset = 0.0f, yaw_offset = 0.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		pitch_offset += deltaTime;
+		pitch_offset += delta_time;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		pitch_offset -= deltaTime;
+		pitch_offset -= delta_time;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		yaw_offset -= deltaTime;
+		yaw_offset -= delta_time;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		yaw_offset += deltaTime;
+		yaw_offset += delta_time;
 	
 	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-		forward_offset -= deltaTime;
+		forward_offset -= delta_time;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
-		forward_offset += deltaTime;
+		forward_offset += delta_time;
 
 	player.process_input(forward_offset, pitch_offset, yaw_offset);
 }
