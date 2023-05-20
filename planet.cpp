@@ -13,10 +13,6 @@
 
 #include "utils.hpp"
 
-static float get_time() {
-	return (float) glfwGetTime();
-}
-
 Planet::Planet(
 	Drawable *drawable, Shader *shader,
 	float radius,

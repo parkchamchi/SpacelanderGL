@@ -19,7 +19,6 @@ void Player::process_input(float forward_offset, float pitch_offset, float yaw_o
 
 	const float forward_sensitivity = 0.01f;
 	velocity += get_front() * forward_offset * forward_sensitivity;
-	position += velocity;
 }
 
 void Player::add_gravity(glm::vec3 gravity) {
@@ -32,6 +31,15 @@ void Player::set_position(glm::vec3 position) {
 }
 
 glm::vec3 Player::get_position() {
+	static float last_time = -1;
+	float time = get_time();
+	if (last_time < 0)
+		last_time = time;
+	float delta_time = time - last_time;
+	last_time = time;
+
+	const float multiplier = 512.0f;
+	position += velocity * multiplier * delta_time;
 	return position;
 }
 

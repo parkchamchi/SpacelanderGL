@@ -95,6 +95,10 @@ static Line *line = nullptr;
 static Cube *cube = nullptr;
 static Cubemap *cubemap = nullptr;
 
+float get_time() {
+	return (float) glfwGetTime();
+}
+
 void draw_circle(glm::mat4 projection, glm::mat4 view, glm::vec3 location, float radius, glm::vec4 color) {
 	if (circle == nullptr)
 		circle = new Circle();
