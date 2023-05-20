@@ -1,5 +1,12 @@
 https://opengameart.org/content/space-skyboxes-0
 
+Author: 
+	StumpyStrust
+
+License:
+	CC0
+	https://creativecommons.org/publicdomain/zero/1.0/
+
 Here are a few skyboxes made with SpaceScape. Free for anything.
 Attribution Instructions: 
 	None.
