@@ -189,13 +189,36 @@ int main() {
 			float dist = glm::distance(planet.get_position(), player.get_position()) - planet.get_radius();
 			glm::vec3 land_velocity = player.get_velocity();
 			float speed = glm::length(land_velocity);
-			float angle = glm::acos(glm::dot(glm::normalize(land_velocity), glm::normalize(planet.get_position() - player.get_position())));
+			//Angle between the player's velocity and the direction beween the player and the planet. Degrees.
+			float angle = glm::degrees(glm::acos(
+				glm::dot(glm::normalize(land_velocity), glm::normalize(planet.get_position() - player.get_position()))));
 
 			if (dist > NEAR*2)
-				//std::cout << '\r' << "Distance: " << dist << ", Speed: " << speed << ", Angle: " << glm::degrees(angle);
-				printf("\rDistance: %.2f, Speed: %.2f, Angle: %.2f", dist, speed, glm::degrees(angle));
-			else
+				//std::cout << '\r' << "Distance: " << dist << ", Speed: " << speed << ", Angle: " << angle;
+				printf("\rDistance: %.2f, Speed: %.4f, Angle: %.2f", dist, speed, angle);
+			else {
 				landed = true; //End
+
+				//Score
+				// 1 / (speed * angle)
+				/*
+				Speed: `100` on 0.01, `0` on 0.1
+				Angle: `100` on 0, `0` on 360.
+				*/
+				float speed_score = -1000 * speed + 110;
+				if (speed_score > 100) speed_score = 100;
+				if (speed_score < 0) speed_score = 0;
+				float angle_score = (-5.0f/18) * angle + 100;
+				putchar('\n');
+				printf("Speed score: %.2f\n", speed_score);
+				printf("Angle score: %.2f\n", angle_score);
+
+				const float speed_score_weight = 3;
+				const float angle_score_weight = 1;
+				float total_score = (speed_score * speed_score_weight + angle_score * angle_score_weight) 
+					/ (speed_score_weight + angle_score_weight);
+				printf("Total score (weights: (%.1f, %.1f)): %.2f\n", speed_score_weight, angle_score_weight, total_score); 
+			}
 		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
