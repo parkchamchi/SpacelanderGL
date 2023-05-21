@@ -23,6 +23,7 @@ To achieve high score, the speed should be low and the direction of the velocity
 - OpenGL
 - [GLAD](https://github.com/Dav1dde/glad/blob/glad2/LICENSE)
 - [GLFW](https://github.com/glfw/glfw/blob/master/LICENSE.md)
+- [GLM](https://github.com/g-truc/glm/blob/master/copying.txt)
 - [Assimp](https://github.com/assimp/assimp/blob/master/LICENSE)
 - [LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL/blob/master/LICENSE.md) for the base code and headers
 
